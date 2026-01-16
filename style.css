@@ -44,3 +44,27 @@ button {
   font-size: 15px;
   cursor: pointer;
 }
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+
+  body {
+    padding: 10px;
+  }
+
+  svg {
+    width: 90vw;   /* ocupa casi todo el ancho del celu */
+    height: 90vw;
+    max-width: 360px;
+    max-height: 360px;
+  }
+
+  .controles {
+    width: 90vw;
+    max-width: 360px;
+  }
+
+  input, button {
+    font-size: 18px;
+    padding: 12px;
+  }
+}

@@ -56,3 +56,26 @@ function aplicarTransformaciones() {
     `rotate(${rotacionFinal} 210 210)`
   );
 }
+const svg = document.getElementById('preview');
+
+// ===== SOPORTE TOUCH (MOBILE) =====
+svg.addEventListener('touchstart', (e) => {
+  arrastrando = true;
+  inicioX = e.touches[0].clientX;
+  e.preventDefault();
+}, { passive: false });
+
+svg.addEventListener('touchmove', (e) => {
+  if (!arrastrando) return;
+
+  const delta = e.touches[0].clientX - inicioX;
+  rotacion += delta * 0.4;
+
+  aplicarTransformaciones();
+  inicioX = e.touches[0].clientX;
+  e.preventDefault();
+}, { passive: false });
+
+svg.addEventListener('touchend', () => {
+  arrastrando = false;
+});

@@ -1,49 +1,24 @@
 const textoInput = document.getElementById('textoInput');
 const textoPreview = document.getElementById('textoPreview');
+const textoGrupo = document.getElementById('textoGrupo');
 const invertirBtn = document.getElementById('invertirBtn');
-
-let invertido = false;
-
-// Función que invierte letras (estilo upside-down)
-function invertirTexto(texto) {
-  const mapa = {
-    a:'ɐ', b:'q', c:'ɔ', d:'p', e:'ǝ',
-    f:'ɟ', g:'ɓ', h:'ɥ', i:'ᴉ',
-    j:'ɾ', k:'ʞ', l:'ן', m:'ɯ',
-    n:'u', o:'o', p:'d', q:'b',
-    r:'ɹ', s:'s', t:'ʇ', u:'n',
-    v:'ʌ', w:'ʍ', x:'x', y:'ʎ',
-    z:'z',
-    A:'∀', B:'𐐒', C:'Ɔ', D:'p',
-    E:'Ǝ', F:'Ⅎ', G:'פ', H:'H',
-    I:'I', J:'ſ', K:'ʞ', L:'˥',
-    M:'W', N:'N', O:'O', P:'Ԁ',
-    Q:'Ό', R:'ᴚ', S:'S', T:'┴',
-    U:'∩', V:'Λ', W:'M', X:'X',
-    Y:'⅄', Z:'Z'
-  };
-
-  return texto
-    .split('')
-    .reverse()
-    .map(c => mapa[c] || c)
-    .join('');
-}
 
 // Texto en tiempo real
 textoInput.addEventListener('input', () => {
-  const texto = textoInput.value || 'TU TEXTO ACÁ';
-  textoPreview.textContent = invertido
-    ? invertirTexto(texto)
-    : texto;
+  textoPreview.textContent = textoInput.value || 'TU TEXTO ACÁ';
 });
 
-// Botón invertir letras
-invertirBtn.addEventListener('click', () => {
-  invertido = !invertido;
+let invertido = false;
 
-  const texto = textoInput.value || 'TU TEXTO ACÁ';
-  textoPreview.textContent = invertido
-    ? invertirTexto(texto)
-    : texto;
+// Rotación REAL 180° (correcta)
+invertirBtn.addEventListener('click', () => {
+  if (!invertido) {
+    textoGrupo.setAttribute(
+      'transform',
+      'rotate(180 210 210)'
+    );
+  } else {
+    textoGrupo.removeAttribute('transform');
+  }
+  invertido = !invertido;
 });

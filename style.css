@@ -68,3 +68,6 @@ button {
     padding: 12px;
   }
 }
+svg {
+  touch-action: none; /* evita que el scroll interfiera con el drag */
+}

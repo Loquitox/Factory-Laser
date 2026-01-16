@@ -1,18 +1,33 @@
+// === ELEMENTOS ===
 const textoInput = document.getElementById('textoInput');
 const textoPreview = document.getElementById('textoPreview');
 const textoCircularEl = document.getElementById('textoCircularEl');
 const invertirBtn = document.getElementById('invertirBtn');
-const svg = document.getElementById('preview');
 
-// ===== TEXTO EN TIEMPO REAL =====
+// === VARIABLES ===
+let invertido = false;
+let arrastrando = false;
+let inicioX = 0;
+let rotacion = 0;
+
+// === TEXTO EN TIEMPO REAL ===
 textoInput.addEventListener('input', () => {
   textoPreview.textContent = textoInput.value || 'TU TEXTO ACÁ';
 });
 
-// ===== ROTACIÓN POR ARRASTRE =====
-let arrastrando = false;
-let inicioX = 0;
-let rotacion = 0;
+// === INVERTIR TEXTO 180° ===
+invertirBtn.addEventListener('click', () => {
+  invertido = !invertido;
+  aplicarTransformaciones();
+});
+
+// === FUNCION APLICAR TRANSFORMACIONES ===
+function aplicarTransformaciones() {
+  const rotacionFinal = invertido ? rotacion + 180 : rotacion;
+  textoCircularEl.setAttribute('transform', `rotate(${rotacionFinal} 210 210)`);
+}
+
+// === ARRASTRE DESKTOP ===
 textoCircularEl.style.cursor = 'grab';
 
 textoCircularEl.addEventListener('mousedown', (e) => {
@@ -25,7 +40,7 @@ textoCircularEl.addEventListener('mousedown', (e) => {
 document.addEventListener('mousemove', (e) => {
   if (!arrastrando) return;
   const delta = e.clientX - inicioX;
-  rotacion += delta * 0.4;
+  rotacion += delta * 0.4; // sensibilidad
   aplicarTransformaciones();
   inicioX = e.clientX;
 });
@@ -35,47 +50,21 @@ document.addEventListener('mouseup', () => {
   textoCircularEl.style.cursor = 'grab';
 });
 
-// ===== INVERTIR TEXTO (180° REAL) =====
-let invertido = false;
-invertirBtn.addEventListener('click', () => {
-  invertido = !invertido;
-  aplicarTransformaciones();
-});
-
-// ===== APLICAR TRANSFORMACIONES =====
-function aplicarTransformaciones() {
-  const rotacionFinal = invertido ? rotacion + 180 : rotacion;
-  textoCircularEl.setAttribute(
-    'transform',
-    `rotate(${rotacionFinal} 210 210)`
-  );
-}
-
-// ===== CAMBIO DE TAMAÑO =====
-const tamBtns = document.querySelectorAll('.tamBtn');
-tamBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const size = btn.getAttribute('data-size');
-    textoCircularEl.setAttribute('font-size', size);
-  });
-});
-
-// ===== SOPORTE TOUCH (MOBILE) =====
-svg.addEventListener('touchstart', (e) => {
+// === ARRASTRE MOBILE ===
+textoCircularEl.addEventListener('touchstart', (e) => {
   arrastrando = true;
   inicioX = e.touches[0].clientX;
-  e.preventDefault();
-}, { passive: false });
+});
 
-svg.addEventListener('touchmove', (e) => {
+document.addEventListener('touchmove', (e) => {
   if (!arrastrando) return;
   const delta = e.touches[0].clientX - inicioX;
-  rotacion += delta * 0.4;
+  rotacion += delta * 0.4; // misma sensibilidad
   aplicarTransformaciones();
   inicioX = e.touches[0].clientX;
-  e.preventDefault();
-}, { passive: false });
+});
 
-svg.addEventListener('touchend', () => {
+document.addEventListener('touchend', () => {
   arrastrando = false;
 });
+

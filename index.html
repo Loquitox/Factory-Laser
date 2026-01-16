@@ -14,23 +14,26 @@
   <div class="contenedor">
 
     <svg id="preview" viewBox="0 0 420 420">
-
-      <!-- Contornos y aro gris -->
+      <!-- Contorno exterior negro fino -->
       <circle cx="210" cy="210" r="160" fill="none" stroke="#000" stroke-width="2" />
+      <!-- Contorno interior negro fino -->
       <circle cx="210" cy="210" r="140" fill="none" stroke="#000" stroke-width="2" />
+      <!-- Borde negro del aro gris (debajo) -->
       <circle cx="210" cy="210" r="150" fill="none" stroke="#000" stroke-width="5" />
+      <!-- Aro gris principal -->
       <circle cx="210" cy="210" r="150" fill="none" stroke="#cfcfcf" stroke-width="35" />
 
       <!-- Path circular invisible -->
       <defs>
-        <path id="textoCircular" d="
-          M 210,210
-          m -150,0
-          a 150,150 0 1,1 300,0
-          a 150,150 0 1,1 -300,0
-        "/>
+        <path id="textoCircular" d="M 210,210 m -150,0 a 150,150 0 1,1 300,0 a 150,150 0 1,1 -300,0" />
       </defs>
 
+      <!-- Texto circular -->
+      <text id="textoCircularEl" font-size="26" fill="#000" dominant-baseline="middle">
+        <textPath id="textoPreview" href="#textoCircular" startOffset="50%" text-anchor="middle">
+          TU TEXTO ACÁ
+        </textPath>
+      </text>
     </svg>
 
     <div class="controles">
@@ -38,7 +41,6 @@
       <input type="text" id="textoInput" placeholder="Escribí tu texto" maxlength="60" />
 
       <button id="invertirBtn">Invertir dirección</button>
-      <button id="agregarCapaBtn">Agregar capa</button>
 
       <div class="tamanos">
         <button class="tamBtn" data-size="18">Pequeño</button>

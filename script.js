@@ -1,123 +1,154 @@
-// === ELEMENTOS PRINCIPALES ===
+// ========================
+// VARIABLES GLOBALES
+// ========================
 const textoInput = document.getElementById('textoInput');
 const invertirBtn = document.getElementById('invertirBtn');
 const agregarCapaBtn = document.getElementById('agregarCapaBtn');
 const quitarCapaBtn = document.getElementById('quitarCapaBtn');
-const svg = document.getElementById('preview');
+const preview = document.getElementById('preview');
 
-// === ARRAY DE CAPAS ===
 let capas = [];
-let capaSeleccionada = null; // la capa que se está editando
+let capaSeleccionada = null;
 
-// === FUNCIONES BASE ===
-function aplicarTransformaciones(capa) {
-  const rotacionFinal = capa.invertido ? capa.rotacion + 180 : capa.rotacion;
-  capa.textoEl.setAttribute('transform', `rotate(${rotacionFinal} 210 210)`);
-}
+// ========================
+// FUNCIONES DE CAPAS
+// ========================
 
-// === CREAR NUEVA CAPA ===
-function crearCapa(texto = 'TU TEXTO ACÁ') {
-  const textoEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  textoEl.setAttribute('font-size', '26');
-  textoEl.setAttribute('fill', '#000');
-  textoEl.setAttribute('dominant-baseline', 'middle');
-  textoEl.style.cursor = 'grab';
+// Crear capa nueva
+function agregarCapa(texto = 'TU TEXTO ACÁ', fontSize = 26) {
+  const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  textEl.setAttribute('font-size', fontSize);
+  textEl.setAttribute('fill', '#000');
+  textEl.setAttribute('dominant-baseline', 'middle');
+  textEl.style.cursor = 'grab';
 
-  const textPathEl = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
-  textPathEl.setAttribute('href', '#textoCircular');
-  textPathEl.setAttribute('startOffset', '50%');
-  textPathEl.setAttribute('text-anchor', 'middle');
-  textPathEl.textContent = texto;
+  const textPath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
+  textPath.setAttribute('href', '#pathNormal');
+  textPath.setAttribute('startOffset', '50%');
+  textPath.setAttribute('text-anchor', 'middle');
+  textPath.textContent = texto;
 
-  textoEl.appendChild(textPathEl);
-  svg.appendChild(textoEl);
+  textEl.appendChild(textPath);
+  preview.appendChild(textEl);
 
   const capa = {
-    textoEl,
-    textPathEl,
+    textEl,
+    textPathEl: textPath,
     rotacion: 0,
     invertido: false
   };
 
-  // evento arrastre desktop
+  // Seleccionar la capa recién creada
+  seleccionarCapa(capa);
+
+  // Hacer arrastrable
+  hacerArrastrable(capa);
+
+  capas.push(capa);
+}
+
+// Seleccionar capa
+function seleccionarCapa(capa) {
+  capaSeleccionada = capa;
+
+  // Actualizar input
+  textoInput.value = capa.textPathEl.textContent;
+}
+
+// Quitar capa
+function quitarCapa() {
+  if (!capaSeleccionada) return;
+  preview.removeChild(capaSeleccionada.textEl);
+  capas = capas.filter(c => c !== capaSeleccionada);
+  capaSeleccionada = capas.length ? capas[capas.length - 1] : null;
+  if (capaSeleccionada) textoInput.value = capaSeleccionada.textPathEl.textContent;
+}
+
+// ========================
+// TEXTO EN TIEMPO REAL
+// ========================
+textoInput.addEventListener('input', () => {
+  if (!capaSeleccionada) return;
+  capaSeleccionada.textPathEl.textContent = textoInput.value || 'TU TEXTO ACÁ';
+});
+
+// ========================
+// INVERTIR DIRECCIÓN
+// ========================
+invertirBtn.addEventListener('click', () => {
+  if (!capaSeleccionada) return;
+
+  const actual = capaSeleccionada.textPathEl.getAttribute('href');
+  if (actual === '#pathNormal') {
+    capaSeleccionada.textPathEl.setAttribute('href', '#pathInvertido');
+    capaSeleccionada.invertido = true;
+  } else {
+    capaSeleccionada.textPathEl.setAttribute('href', '#pathNormal');
+    capaSeleccionada.invertido = false;
+  }
+});
+
+// ========================
+// ARRASTRAR (DESKTOP & MOBILE)
+// ========================
+function hacerArrastrable(capa) {
   let arrastrando = false;
   let inicioX = 0;
 
-  textoEl.addEventListener('mousedown', (e) => {
+  // Desktop
+  capa.textEl.addEventListener('mousedown', e => {
     arrastrando = true;
     inicioX = e.clientX;
-    capa.textoEl.style.cursor = 'grabbing';
-    // seleccionamos esta capa al hacer click
-    capaSeleccionada = capa;
-    textoInput.value = capaSeleccionada.textPathEl.textContent;
+    capa.textEl.style.cursor = 'grabbing';
     e.preventDefault();
   });
 
-  document.addEventListener('mousemove', (e) => {
+  document.addEventListener('mousemove', e => {
     if (!arrastrando) return;
     const delta = e.clientX - inicioX;
     capa.rotacion += delta * 0.4;
-    aplicarTransformaciones(capa);
+    aplicarTransformacion(capa);
     inicioX = e.clientX;
   });
 
   document.addEventListener('mouseup', () => {
     arrastrando = false;
-    textoEl.style.cursor = 'grab';
+    capa.textEl.style.cursor = 'grab';
   });
 
-  // evento arrastre mobile
-  textoEl.addEventListener('touchstart', (e) => {
+  // Mobile
+  capa.textEl.addEventListener('touchstart', e => {
     arrastrando = true;
     inicioX = e.touches[0].clientX;
-    capaSeleccionada = capa;
-    textoInput.value = capaSeleccionada.textPathEl.textContent;
+    e.preventDefault();
   });
 
-  document.addEventListener('touchmove', (e) => {
+  document.addEventListener('touchmove', e => {
     if (!arrastrando) return;
     const delta = e.touches[0].clientX - inicioX;
     capa.rotacion += delta * 0.4;
-    aplicarTransformaciones(capa);
+    aplicarTransformacion(capa);
     inicioX = e.touches[0].clientX;
   });
 
   document.addEventListener('touchend', () => {
     arrastrando = false;
   });
-
-  capas.push(capa);
-  capaSeleccionada = capa;
-  textoInput.value = capaSeleccionada.textPathEl.textContent;
 }
 
-// === INPUT DE TEXTO EN TIEMPO REAL ===
-textoInput.addEventListener('input', () => {
-  if (capaSeleccionada) {
-    capaSeleccionada.textPathEl.textContent = textoInput.value || 'TU TEXTO ACÁ';
-  }
-});
+// Aplicar transformación (rotación + invertir)
+function aplicarTransformacion(capa) {
+  const rotFinal = capa.invertido ? capa.rotacion + 180 : capa.rotacion;
+  capa.textEl.setAttribute('transform', `rotate(${rotFinal} 210 210)`);
+}
 
-// === INVERTIR TEXTO 180° ===
-invertirBtn.addEventListener('click', () => {
-  if (capaSeleccionada) {
-    capaSeleccionada.invertido = !capaSeleccionada.invertido;
-    aplicarTransformaciones(capaSeleccionada);
-  }
-});
+// ========================
+// BOTONES CAPAS
+// ========================
+agregarCapaBtn.addEventListener('click', () => agregarCapa());
+quitarCapaBtn.addEventListener('click', quitarCapa);
 
-// === BOTONES CAPAS ===
-agregarCapaBtn.addEventListener('click', () => {
-  crearCapa();
-});
-
-quitarCapaBtn.addEventListener('click', () => {
-  if (!capaSeleccionada) return;
-  svg.removeChild(capaSeleccionada.textoEl);
-  capas = capas.filter(c => c !== capaSeleccionada);
-  capaSeleccionada = capas.length ? capas[capas.length - 1] : null;
-  textoInput.value = capaSeleccionada ? capaSeleccionada.textPathEl.textContent : '';
-});
-
-// === CREAR CAPA INICIAL ===
-crearCapa();
+// ========================
+// INICIALIZACIÓN
+// ========================
+agregarCapa();

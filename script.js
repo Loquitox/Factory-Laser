@@ -42,8 +42,11 @@ document.addEventListener('mousemove', (e) => {
   const delta = e.clientX - inicioX;
   offsetActual += delta * 0.05;
 
-  if (offsetActual < 0) offsetActual = 0;
-  if (offsetActual > 100) offsetActual = 100;
+const margen = 15; // zona segura
+
+if (offsetActual < margen) offsetActual = margen;
+if (offsetActual > 100 - margen) offsetActual = 100 - margen;
+
 
   textoPreview.setAttribute('startOffset', offsetActual + '%');
   inicioX = e.clientX;

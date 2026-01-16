@@ -2,6 +2,7 @@ const textoInput = document.getElementById('textoInput');
 const textoPreview = document.getElementById('textoPreview');
 const textoCircularEl = document.getElementById('textoCircularEl');
 const invertirBtn = document.getElementById('invertirBtn');
+const svg = document.getElementById('preview');
 
 // ===== TEXTO EN TIEMPO REAL =====
 textoInput.addEventListener('input', () => {
@@ -12,7 +13,6 @@ textoInput.addEventListener('input', () => {
 let arrastrando = false;
 let inicioX = 0;
 let rotacion = 0;
-
 textoCircularEl.style.cursor = 'grab';
 
 textoCircularEl.addEventListener('mousedown', (e) => {
@@ -24,12 +24,8 @@ textoCircularEl.addEventListener('mousedown', (e) => {
 
 document.addEventListener('mousemove', (e) => {
   if (!arrastrando) return;
-
   const delta = e.clientX - inicioX;
-
-  // sensibilidad de giro
   rotacion += delta * 0.4;
-
   aplicarTransformaciones();
   inicioX = e.clientX;
 });
@@ -41,7 +37,6 @@ document.addEventListener('mouseup', () => {
 
 // ===== INVERTIR TEXTO (180° REAL) =====
 let invertido = false;
-
 invertirBtn.addEventListener('click', () => {
   invertido = !invertido;
   aplicarTransformaciones();
@@ -50,13 +45,20 @@ invertirBtn.addEventListener('click', () => {
 // ===== APLICAR TRANSFORMACIONES =====
 function aplicarTransformaciones() {
   const rotacionFinal = invertido ? rotacion + 180 : rotacion;
-
   textoCircularEl.setAttribute(
     'transform',
     `rotate(${rotacionFinal} 210 210)`
   );
 }
-const svg = document.getElementById('preview');
+
+// ===== CAMBIO DE TAMAÑO =====
+const tamBtns = document.querySelectorAll('.tamBtn');
+tamBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const size = btn.getAttribute('data-size');
+    textoCircularEl.setAttribute('font-size', size);
+  });
+});
 
 // ===== SOPORTE TOUCH (MOBILE) =====
 svg.addEventListener('touchstart', (e) => {
@@ -67,10 +69,8 @@ svg.addEventListener('touchstart', (e) => {
 
 svg.addEventListener('touchmove', (e) => {
   if (!arrastrando) return;
-
   const delta = e.touches[0].clientX - inicioX;
   rotacion += delta * 0.4;
-
   aplicarTransformaciones();
   inicioX = e.touches[0].clientX;
   e.preventDefault();
@@ -79,13 +79,3 @@ svg.addEventListener('touchmove', (e) => {
 svg.addEventListener('touchend', () => {
   arrastrando = false;
 });
-// ===== CAMBIO DE TAMAÑO =====
-const tamBtns = document.querySelectorAll('.tamBtn');
-
-tamBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const size = btn.getAttribute('data-size');
-    textoCircularEl.setAttribute('font-size', size);
-  });
-});
-

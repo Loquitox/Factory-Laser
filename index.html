@@ -14,26 +14,27 @@
 
     <svg id="preview" viewBox="0 0 420 420">
 
-      <!-- Contorno exterior negro fino -->
-      <circle cx="210" cy="210" r="160" fill="none" stroke="#000" stroke-width="2" />
-
-      <!-- Contorno interior negro fino -->
-      <circle cx="210" cy="210" r="140" fill="none" stroke="#000" stroke-width="2" />
-
-      <!-- Borde negro del aro gris (debajo) -->
+      <!-- Aro gris con borde negro debajo -->
       <circle cx="210" cy="210" r="150" fill="none" stroke="#000" stroke-width="5" />
-
-      <!-- Aro gris principal -->
       <circle cx="210" cy="210" r="150" fill="none" stroke="#cfcfcf" stroke-width="35" />
 
-      <!-- Path circular invisible -->
+      <!-- Paths -->
       <defs>
+        <!-- Sentido normal -->
         <path
-          id="textoCircular"
+          id="pathNormal"
           d="M 210,210
              m -150,0
              a 150,150 0 1,1 300,0
              a 150,150 0 1,1 -300,0" />
+
+        <!-- Sentido inverso -->
+        <path
+          id="pathInvertido"
+          d="M 210,210
+             m -150,0
+             a 150,150 0 1,0 300,0
+             a 150,150 0 1,0 -300,0" />
       </defs>
 
       <!-- Texto circular -->
@@ -43,7 +44,7 @@
             dominant-baseline="middle">
         <textPath
           id="textoPreview"
-          href="#textoCircular"
+          href="#pathNormal"
           startOffset="50%"
           text-anchor="middle">
           TU TEXTO ACÁ
@@ -61,7 +62,7 @@
         maxlength="60"
       />
 
-      <button id="invertirBtn">Invertir dirección</button>
+      <button id="invertirBtn">Dirección inversa</button>
     </div>
 
   </div>

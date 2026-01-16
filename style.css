@@ -71,3 +71,14 @@ button {
 svg {
   touch-action: none; /* evita que el scroll interfiera con el drag */
 }
+.tamanos {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.tamBtn {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}

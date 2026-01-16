@@ -79,3 +79,13 @@ svg.addEventListener('touchmove', (e) => {
 svg.addEventListener('touchend', () => {
   arrastrando = false;
 });
+// ===== CAMBIO DE TAMAÑO =====
+const tamBtns = document.querySelectorAll('.tamBtn');
+
+tamBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const size = btn.getAttribute('data-size');
+    textoCircularEl.setAttribute('font-size', size);
+  });
+});
+

@@ -1,15 +1,16 @@
 const textoInput = document.getElementById('textoInput');
 const textoPreview = document.getElementById('textoPreview');
+const textoCircularEl = document.getElementById('textoCircularEl');
 const invertirBtn = document.getElementById('invertirBtn');
 
 let invertido = false;
 
-// Texto en tiempo real
+// texto en tiempo real
 textoInput.addEventListener('input', () => {
   textoPreview.textContent = textoInput.value || 'TU TEXTO ACÁ';
 });
 
-// Dirección inversa (como Zizou)
+// dirección inversa (path normal / invertido)
 invertirBtn.addEventListener('click', () => {
   textoPreview.setAttribute(
     'href',
@@ -17,17 +18,20 @@ invertirBtn.addEventListener('click', () => {
   );
   invertido = !invertido;
 });
+
+// --- DRAG ---
 let arrastrando = false;
 let inicioX = 0;
 let offsetActual = 50;
 
-// arrancamos centrado
+// centrado inicial
 textoPreview.setAttribute('startOffset', offsetActual + '%');
 
-// mouse down sobre el texto
-textoPreview.addEventListener('mousedown', (e) => {
+// mouse down sobre el TEXTO
+textoCircularEl.addEventListener('mousedown', (e) => {
   arrastrando = true;
   inicioX = e.clientX;
+  textoCircularEl.style.cursor = 'grabbing';
   e.preventDefault();
 });
 
@@ -36,20 +40,18 @@ document.addEventListener('mousemove', (e) => {
   if (!arrastrando) return;
 
   const delta = e.clientX - inicioX;
-
-  // sensibilidad (ajustable)
   offsetActual += delta * 0.05;
 
-  // límites
   if (offsetActual < 0) offsetActual = 0;
   if (offsetActual > 100) offsetActual = 100;
 
   textoPreview.setAttribute('startOffset', offsetActual + '%');
-
   inicioX = e.clientX;
 });
 
 // mouse up
 document.addEventListener('mouseup', () => {
   arrastrando = false;
+  textoCircularEl.style.cursor = 'grab';
 });
+

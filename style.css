@@ -27,13 +27,11 @@ svg {
   margin-bottom: 20px;
 }
 
-/* Para que cada texto sea arrastrable y no seleccionable */
 text {
   cursor: grab;
   user-select: none;
 }
 
-/* Controles */
 .controles {
   display: flex;
   flex-direction: column;

@@ -1,127 +1,66 @@
-const svg = document.getElementById('preview');
-const textoInput = document.getElementById('textoInput');
-const invertirBtn = document.getElementById('invertirBtn');
-const agregarCapaBtn = document.getElementById('agregarCapaBtn');
-const tamBtns = document.querySelectorAll('.tamBtn');
-const pathCircular = document.getElementById('textoCircular');
-
-let capas = [];
-let capaSeleccionada = null;
-
-// ===== FUNCION CREAR CAPA =====
-function crearCapa(texto = 'TU TEXTO ACÁ', fontSize = 26) {
-  const nuevaCapa = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  nuevaCapa.setAttribute('font-size', fontSize);
-  nuevaCapa.setAttribute('fill', '#000');
-  nuevaCapa.setAttribute('dominant-baseline', 'middle');
-
-  const textPath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
-  textPath.setAttribute('href', '#textoCircular');
-  textPath.setAttribute('startOffset', '50%');
-  textPath.setAttribute('text-anchor', 'middle');
-  textPath.textContent = texto;
-
-  nuevaCapa.appendChild(textPath);
-  svg.appendChild(nuevaCapa);
-
-  const capaObj = {
-    el: nuevaCapa,
-    textPath: textPath,
-    rotacion: 0,
-    invertido: false
-  };
-
-  capas.push(capaObj);
-  seleccionarCapa(capaObj);
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 20px;
 }
 
-// ===== SELECCIONAR CAPA =====
-function seleccionarCapa(capaObj) {
-  capaSeleccionada = capaObj;
-  textoInput.value = capaObj.textPath.textContent;
+h1 {
+  margin-bottom: 5px;
 }
 
-// ===== INPUT EN TIEMPO REAL =====
-textoInput.addEventListener('input', () => {
-  if (!capaSeleccionada) return;
-  capaSeleccionada.textPath.textContent = textoInput.value || 'TU TEXTO ACÁ';
-});
-
-// ===== BOTON INVERTIR =====
-invertirBtn.addEventListener('click', () => {
-  if (!capaSeleccionada) return;
-  capaSeleccionada.invertido = !capaSeleccionada.invertido;
-  aplicarTransformaciones(capaSeleccionada);
-});
-
-// ===== BOTONES DE TAMAÑO =====
-tamBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (!capaSeleccionada) return;
-    const size = btn.getAttribute('data-size');
-    capaSeleccionada.textPath.setAttribute('font-size', size);
-  });
-});
-
-// ===== BOTON AGREGAR CAPA =====
-agregarCapaBtn.addEventListener('click', () => {
-  crearCapa();
-});
-
-// ===== ARRASTRE =====
-let arrastrando = false;
-let inicioX = 0;
-
-svg.addEventListener('mousedown', e => {
-  if (!e.target.closest('text')) return;
-  const capa = capas.find(c => c.el === e.target.closest('text'));
-  if (!capa) return;
-  seleccionarCapa(capa);
-  arrastrando = true;
-  inicioX = e.clientX;
-});
-
-document.addEventListener('mousemove', e => {
-  if (!arrastrando || !capaSeleccionada) return;
-  const delta = e.clientX - inicioX;
-  capaSeleccionada.rotacion += delta * 0.4;
-  aplicarTransformaciones(capaSeleccionada);
-  inicioX = e.clientX;
-});
-
-document.addEventListener('mouseup', () => {
-  arrastrando = false;
-});
-
-// ===== FUNCION APLICAR TRANSFORM =====
-function aplicarTransformaciones(capa) {
-  const rot = capa.invertido ? capa.rotacion + 180 : capa.rotacion;
-  capa.el.setAttribute('transform', `rotate(${rot} 210 210)`);
+p {
+  margin-top: 0;
+  margin-bottom: 20px;
 }
 
-// ===== SOPORTE TOUCH =====
-svg.addEventListener('touchstart', e => {
-  const touch = e.touches[0];
-  const target = document.elementFromPoint(touch.clientX, touch.clientY);
-  if (!target || !target.closest('text')) return;
-  const capa = capas.find(c => c.el === target.closest('text'));
-  if (!capa) return;
-  seleccionarCapa(capa);
-  arrastrando = true;
-  inicioX = touch.clientX;
-  e.preventDefault();
-}, { passive: false });
+.contenedor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-svg.addEventListener('touchmove', e => {
-  if (!arrastrando || !capaSeleccionada) return;
-  const delta = e.touches[0].clientX - inicioX;
-  capaSeleccionada.rotacion += delta * 0.4;
-  aplicarTransformaciones(capaSeleccionada);
-  inicioX = e.touches[0].clientX;
-  e.preventDefault();
-}, { passive: false });
+svg {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  touch-action: none; /* importante para mobile drag */
+}
 
-svg.addEventListener('touchend', () => { arrastrando = false; });
+.controles {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
 
-// ===== CREAR LA PRIMERA CAPA AUTOMÁTICAMENTE =====
-crearCapa();
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.tamanos {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.tamBtn {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}

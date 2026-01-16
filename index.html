@@ -14,34 +14,37 @@
 
     <svg id="preview" viewBox="0 0 420 420">
 
-      <!-- Aro gris con borde negro debajo -->
-      <circle cx="210" cy="210" r="150" fill="none" stroke="#000" stroke-width="5" />
-      <circle cx="210" cy="210" r="150" fill="none" stroke="#cfcfcf" stroke-width="35" />
+      <!-- Borde negro más grueso (debajo del gris) -->
+      <circle cx="210" cy="210" r="150"
+              fill="none" stroke="#000" stroke-width="38" />
+
+      <!-- Aro gris principal -->
+      <circle cx="210" cy="210" r="150"
+              fill="none" stroke="#cfcfcf" stroke-width="32" />
 
       <!-- Paths -->
       <defs>
-        <!-- Sentido normal -->
-        <path
-          id="pathNormal"
+        <!-- normal -->
+        <path id="pathNormal"
           d="M 210,210
              m -150,0
              a 150,150 0 1,1 300,0
              a 150,150 0 1,1 -300,0" />
 
-        <!-- Sentido inverso -->
-        <path
-          id="pathInvertido"
+        <!-- invertido -->
+        <path id="pathInvertido"
           d="M 210,210
-             m -150,0
-             a 150,150 0 1,0 300,0
-             a 150,150 0 1,0 -300,0" />
+             m 150,0
+             a 150,150 0 1,0 -300,0
+             a 150,150 0 1,0 300,0" />
       </defs>
 
-      <!-- Texto circular -->
-      <text id="textoGrupo"
+      <!-- Texto -->
+      <text id="textoCircularEl"
             font-size="26"
             fill="#000"
-            dominant-baseline="middle">
+            dominant-baseline="middle"
+            style="cursor: grab;">
         <textPath
           id="textoPreview"
           href="#pathNormal"
@@ -55,12 +58,7 @@
 
     <div class="controles">
       <label>Texto a grabar</label>
-      <input
-        type="text"
-        id="textoInput"
-        placeholder="Escribí tu texto"
-        maxlength="60"
-      />
+      <input type="text" id="textoInput" placeholder="Escribí tu texto" />
 
       <button id="invertirBtn">Dirección inversa</button>
     </div>

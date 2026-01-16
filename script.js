@@ -20,7 +20,6 @@ function crearCapa(texto = 'TU TEXTO ACÁ', fontSize = 26) {
   nuevaCapa.style.cursor = 'grab';
   svg.appendChild(nuevaCapa);
 
-  // Datos extra para control
   const capaObj = {
     el: nuevaCapa,
     rotacion: 0,
@@ -121,4 +120,3 @@ svg.addEventListener('touchmove', e => {
 }, { passive: false });
 
 svg.addEventListener('touchend', () => { arrastrando = false; });
-

@@ -1,24 +1,19 @@
 const textoInput = document.getElementById('textoInput');
 const textoPreview = document.getElementById('textoPreview');
-const textoGrupo = document.getElementById('textoGrupo');
 const invertirBtn = document.getElementById('invertirBtn');
+
+let invertido = false;
 
 // Texto en tiempo real
 textoInput.addEventListener('input', () => {
   textoPreview.textContent = textoInput.value || 'TU TEXTO ACÁ';
 });
 
-let invertido = false;
-
-// Rotación REAL 180° (correcta)
+// Dirección inversa (como Zizou)
 invertirBtn.addEventListener('click', () => {
-  if (!invertido) {
-    textoGrupo.setAttribute(
-      'transform',
-      'rotate(180 210 210)'
-    );
-  } else {
-    textoGrupo.removeAttribute('transform');
-  }
+  textoPreview.setAttribute(
+    'href',
+    invertido ? '#pathNormal' : '#pathInvertido'
+  );
   invertido = !invertido;
 });

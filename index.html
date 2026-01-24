@@ -2,45 +2,39 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Customizador Virola - Factory Laser</title>
+  <title>Personalizá tu virola</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>Personalizá tu virola</h2>
+<h1>Personalizá tu virola</h1>
 
-<div class="preview">
-  <svg id="svg" width="320" height="320" viewBox="0 0 320 320">
-
-    <!-- Virola visible -->
-    <circle cx="160" cy="160" r="120"
-      fill="#d9d9d9"
+<div id="canvas-container">
+  <svg id="virola" viewBox="0 0 400 400">
+    <!-- Virola -->
+    <circle cx="200" cy="200" r="170"
+      fill="#e0e0e0"
       stroke="#000"
-      stroke-width="3" />
+      stroke-width="5"/>
 
-    <!-- Path base -->
-<defs>
-  <!-- Path superior -->
-  <path id="pathTop"
-    d="M40,160 a120,120 0 1,1 240,0" />
-
-  <!-- Path inferior -->
-  <path id="pathBottom"
-    d="M280,160 a120,120 0 1,1 -240,0" />
-</defs>
-
+    <!-- Texto -->
+    <text id="textoVirola"
+      x="200"
+      y="50"
+      text-anchor="middle"
+      dominant-baseline="middle">
+      TEXTO
+    </text>
   </svg>
 </div>
 
-<div class="controls">
-  <input id="textInput" type="text" placeholder="Escribí tu texto">
+<input type="text" id="textoInput" value="TEXTO">
 
-  <div class="buttons">
-    <button id="add">+</button>
-    <button id="remove">−</button>
-    <button id="size">Tamaño</button>
-    <button id="invert">Invertir</button>
-  </div>
+<div class="botones">
+  <button id="btnAdd">+</button>
+  <button id="btnRemove">-</button>
+  <button id="btnSize">Tamaño</button>
+  <button id="btnInvert">Invertir</button>
 </div>
 
 <script src="script.js"></script>

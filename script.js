@@ -1,107 +1,95 @@
-const svg = document.getElementById("svg");
-const input = document.getElementById("textInput");
+const textoSVG = document.getElementById("textoVirola");
+const input = document.getElementById("textoInput");
 
-const sizes = [14, 18, 22, 26]; // 4 alturas
-let texts = [];
-let active = null;
+const btnAdd = document.getElementById("btnAdd");
+const btnRemove = document.getElementById("btnRemove");
+const btnSize = document.getElementById("btnSize");
+const btnInvert = document.getElementById("btnInvert");
 
-function createText(content) {
-  const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
+let textos = ["TEXTO"];
+let sizeIndex = 1;
+let sizes = [16, 20, 24, 28]; // 4 alturas
+let rotation = 0;
 
-  text.setAttribute("font-size", sizes[1]);
-  text.setAttribute("text-anchor", "middle");
-  text.setAttribute("cursor", "grab");
-  text.setAttribute("transform-origin", "160px 160px");
-
-  textPath.setAttribute("href", "#textPathCircle");
-  textPath.setAttribute("startOffset", "50%");
-  textPath.textContent = content || "TEXTO";
-
-  text.appendChild(textPath);
-  svg.appendChild(text);
-
-  const obj = {
-    text,
-    textPath,
-    sizeIndex: 1,
-    offset: 50,
-    inverted: false
-  };
-
-  enableDrag(obj);
-  texts.push(obj);
-  setActive(obj);
+// ===== Texto base =====
+function actualizarTexto() {
+  textoSVG.textContent = textos.join(" ");
 }
+actualizarTexto();
 
-function setActive(obj) {
-  active = obj;
-  input.value = obj.textPath.textContent;
-}
-
+// ===== Input =====
 input.addEventListener("input", () => {
-  if (active) active.textPath.textContent = input.value;
+  textos[textos.length - 1] = input.value;
+  actualizarTexto();
 });
 
-document.getElementById("add").onclick = () => {
-  createText(input.value);
-};
+// ===== Agregar texto =====
+btnAdd.addEventListener("click", () => {
+  textos.push(input.value);
+  actualizarTexto();
+});
 
-document.getElementById("remove").onclick = () => {
-  if (!active) return;
-  svg.removeChild(active.text);
-  texts = texts.filter(t => t !== active);
-  active = texts[texts.length - 1] || null;
-  if (active) input.value = active.textPath.textContent;
-};
+// ===== Quitar texto =====
+btnRemove.addEventListener("click", () => {
+  if (textos.length > 1) {
+    textos.pop();
+    actualizarTexto();
+  }
+});
 
-document.getElementById("invert").onclick = () => {
-  if (!active) return;
-  active.inverted = !active.inverted;
-  active.text.setAttribute(
-    "transform",
-    active.inverted ? "rotate(180 160 160)" : "rotate(0 160 160)"
-  );
-};
+// ===== Tamaño =====
+btnSize.addEventListener("click", () => {
+  sizeIndex = (sizeIndex + 1) % sizes.length;
+  textoSVG.style.fontSize = sizes[sizeIndex] + "px";
+});
 
-document.getElementById("size").onclick = () => {
-  if (!active) return;
-  active.sizeIndex = (active.sizeIndex + 1) % sizes.length;
-  active.text.setAttribute("font-size", sizes[active.sizeIndex]);
-};
+// ===== Invertir 180° =====
+btnInvert.addEventListener("click", () => {
+  rotation = (rotation + 180) % 360;
+  aplicarTransform();
+});
 
-// Drag angular (mouse + touch)
-function enableDrag(obj) {
-  let startX = 0;
+// ===== Movimiento 360° =====
+let dragging = false;
 
-  const start = e => {
-    startX = e.touches ? e.touches[0].clientX : e.clientX;
-    setActive(obj);
-    window.addEventListener("mousemove", move);
-    window.addEventListener("touchmove", move);
-    window.addEventListener("mouseup", end);
-    window.addEventListener("touchend", end);
-  };
-
-  const move = e => {
-    const x = e.touches ? e.touches[0].clientX : e.clientX;
-    const delta = (x - startX) * 0.15;
-    startX = x;
-
-    obj.offset = Math.min(80, Math.max(20, obj.offset + delta));
-    obj.textPath.setAttribute("startOffset", obj.offset + "%");
-  };
-
-  const end = () => {
-    window.removeEventListener("mousemove", move);
-    window.removeEventListener("touchmove", move);
-    window.removeEventListener("mouseup", end);
-    window.removeEventListener("touchend", end);
-  };
-
-  obj.text.addEventListener("mousedown", start);
-  obj.text.addEventListener("touchstart", start);
+function getAngle(x, y) {
+  const cx = 200;
+  const cy = 200;
+  return Math.atan2(y - cy, x - cx) * 180 / Math.PI;
 }
 
-// Texto inicial
-createText("TEXTO");
+function aplicarTransform(angle = null) {
+  if (angle !== null) {
+    textoSVG.dataset.angle = angle;
+  }
+  const a = textoSVG.dataset.angle || 0;
+  textoSVG.setAttribute(
+    "transform",
+    `rotate(${Number(a) + rotation} 200 200)`
+  );
+}
+
+// Mouse
+textoSVG.addEventListener("mousedown", () => dragging = true);
+document.addEventListener("mouseup", () => dragging = false);
+
+document.addEventListener("mousemove", e => {
+  if (!dragging) return;
+  const rect = document.getElementById("virola").getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  aplicarTransform(getAngle(x, y));
+});
+
+// Touch (móvil)
+textoSVG.addEventListener("touchstart", () => dragging = true);
+document.addEventListener("touchend", () => dragging = false);
+
+document.addEventListener("touchmove", e => {
+  if (!dragging) return;
+  const rect = document.getElementById("virola").getBoundingClientRect();
+  const t = e.touches[0];
+  const x = t.clientX - rect.left;
+  const y = t.clientY - rect.top;
+  aplicarTransform(getAngle(x, y));
+});

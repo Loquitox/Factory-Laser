@@ -3,30 +3,30 @@ body {
   text-align: center;
 }
 
-.preview {
-  margin: 20px auto;
-  width: 320px;
+#canvas-container {
+  width: 300px;
+  margin: 0 auto;
 }
 
 svg {
+  width: 100%;
   touch-action: none;
 }
 
-.controls {
-  margin-top: 15px;
+#textoVirola {
+  font-size: 24px;
+  font-weight: bold;
+  cursor: grab;
+  user-select: none;
 }
 
 input {
+  width: 250px;
   padding: 8px;
-  width: 220px;
+  margin: 15px 0;
 }
 
-.buttons {
-  margin-top: 10px;
-}
-
-button {
-  padding: 6px 12px;
-  margin: 4px;
-  cursor: pointer;
+.botones button {
+  padding: 8px 12px;
+  margin: 5px;
 }

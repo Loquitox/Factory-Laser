@@ -1,40 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Personalizá tu virola</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<h1>Personalizá tu virola</h1>
+<h2>Personalizá tu virola</h2>
 
-<div id="canvas-container">
-  <svg id="virola" viewBox="0 0 400 400">
-    <!-- Virola -->
-    <circle cx="200" cy="200" r="170"
-      fill="#e0e0e0"
-      stroke="#000"
-      stroke-width="5"/>
+<svg id="svg" width="300" height="300" viewBox="0 0 300 300">
+  <!-- Virola (aro) -->
+  <circle cx="150" cy="150" r="120" fill="#e0e0e0" stroke="#000" stroke-width="4"/>
+  <circle cx="150" cy="150" r="95" fill="#fff"/>
 
-    <!-- Texto -->
-    <text id="textoVirola"
-      x="200"
-      y="50"
-      text-anchor="middle"
-      dominant-baseline="middle">
+  <!-- Path invisible -->
+  <defs>
+    <path id="textPathCircle"
+          d="M150,150 m-107,0 a107,107 0 1,1 214,0 a107,107 0 1,1 -214,0"/>
+  </defs>
+
+  <!-- Texto -->
+  <text id="virolaText">
+    <textPath id="textPath"
+              href="#textPathCircle"
+              startOffset="50%"
+              text-anchor="middle">
       TEXTO
-    </text>
-  </svg>
-</div>
+    </textPath>
+  </text>
+</svg>
 
-<input type="text" id="textoInput" value="TEXTO">
+<input id="textInput" type="text" value="TEXTO" />
 
-<div class="botones">
-  <button id="btnAdd">+</button>
-  <button id="btnRemove">-</button>
-  <button id="btnSize">Tamaño</button>
-  <button id="btnInvert">Invertir</button>
+<div class="buttons">
+  <button id="add">+</button>
+  <button id="remove">-</button>
+  <button id="size">Tamaño</button>
+  <button id="invert">Invertir</button>
 </div>
 
 <script src="script.js"></script>

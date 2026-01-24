@@ -1,7 +1,7 @@
 const svg = document.getElementById("svg");
 const input = document.getElementById("textInput");
 
-const sizes = [14, 18, 22, 26]; // 4 alturas reales
+const sizes = [14, 18, 22, 26]; // 4 alturas
 let texts = [];
 let active = null;
 
@@ -12,8 +12,9 @@ function createText(content) {
   text.setAttribute("font-size", sizes[1]);
   text.setAttribute("text-anchor", "middle");
   text.setAttribute("cursor", "grab");
+  text.setAttribute("transform-origin", "160px 160px");
 
-  textPath.setAttribute("href", "#pathTop");
+  textPath.setAttribute("href", "#textPathCircle");
   textPath.setAttribute("startOffset", "50%");
   textPath.textContent = content || "TEXTO";
 
@@ -57,9 +58,9 @@ document.getElementById("remove").onclick = () => {
 document.getElementById("invert").onclick = () => {
   if (!active) return;
   active.inverted = !active.inverted;
-  active.textPath.setAttribute(
-    "href",
-    active.inverted ? "#pathBottom" : "#pathTop"
+  active.text.setAttribute(
+    "transform",
+    active.inverted ? "rotate(180 160 160)" : "rotate(0 160 160)"
   );
 };
 
@@ -69,7 +70,7 @@ document.getElementById("size").onclick = () => {
   active.text.setAttribute("font-size", sizes[active.sizeIndex]);
 };
 
-// DRAG angular (mouse + touch)
+// Drag angular (mouse + touch)
 function enableDrag(obj) {
   let startX = 0;
 

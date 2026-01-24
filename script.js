@@ -1,95 +1,61 @@
-const textoSVG = document.getElementById("textoVirola");
-const input = document.getElementById("textoInput");
+const textPath = document.getElementById("textPath");
+const textInput = document.getElementById("textInput");
+const svgText = document.getElementById("virolaText");
 
-const btnAdd = document.getElementById("btnAdd");
-const btnRemove = document.getElementById("btnRemove");
-const btnSize = document.getElementById("btnSize");
-const btnInvert = document.getElementById("btnInvert");
-
-let textos = ["TEXTO"];
+let startOffset = 50;
+let inverted = false;
 let sizeIndex = 1;
-let sizes = [16, 20, 24, 28]; // 4 alturas
-let rotation = 0;
+const sizes = [12, 16, 20, 24];
 
-// ===== Texto base =====
-function actualizarTexto() {
-  textoSVG.textContent = textos.join(" ");
-}
-actualizarTexto();
-
-// ===== Input =====
-input.addEventListener("input", () => {
-  textos[textos.length - 1] = input.value;
-  actualizarTexto();
+// Texto en vivo
+textInput.addEventListener("input", () => {
+  textPath.textContent = textInput.value || " ";
 });
 
-// ===== Agregar texto =====
-btnAdd.addEventListener("click", () => {
-  textos.push(input.value);
-  actualizarTexto();
-});
+// Agregar texto
+document.getElementById("add").onclick = () => {
+  textInput.value += " TEXTO";
+  textPath.textContent = textInput.value;
+};
 
-// ===== Quitar texto =====
-btnRemove.addEventListener("click", () => {
-  if (textos.length > 1) {
-    textos.pop();
-    actualizarTexto();
-  }
-});
+// Quitar texto
+document.getElementById("remove").onclick = () => {
+  textInput.value = "";
+  textPath.textContent = " ";
+};
 
-// ===== Tamaño =====
-btnSize.addEventListener("click", () => {
+// Tamaño (4 alturas)
+document.getElementById("size").onclick = () => {
   sizeIndex = (sizeIndex + 1) % sizes.length;
-  textoSVG.style.fontSize = sizes[sizeIndex] + "px";
-});
+  svgText.style.fontSize = sizes[sizeIndex] + "px";
+};
 
-// ===== Invertir 180° =====
-btnInvert.addEventListener("click", () => {
-  rotation = (rotation + 180) % 360;
-  aplicarTransform();
-});
-
-// ===== Movimiento 360° =====
-let dragging = false;
-
-function getAngle(x, y) {
-  const cx = 200;
-  const cy = 200;
-  return Math.atan2(y - cy, x - cx) * 180 / Math.PI;
-}
-
-function aplicarTransform(angle = null) {
-  if (angle !== null) {
-    textoSVG.dataset.angle = angle;
-  }
-  const a = textoSVG.dataset.angle || 0;
-  textoSVG.setAttribute(
+// Invertir (texto de cabeza, mismo lugar)
+document.getElementById("invert").onclick = () => {
+  inverted = !inverted;
+  svgText.setAttribute(
     "transform",
-    `rotate(${Number(a) + rotation} 200 200)`
+    inverted ? "rotate(180 150 150)" : "rotate(0 150 150)"
   );
-}
+};
 
-// Mouse
-textoSVG.addEventListener("mousedown", () => dragging = true);
-document.addEventListener("mouseup", () => dragging = false);
+// Rotar libre 360° (mouse / táctil)
+let dragging = false;
+let startX = 0;
 
-document.addEventListener("mousemove", e => {
-  if (!dragging) return;
-  const rect = document.getElementById("virola").getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  aplicarTransform(getAngle(x, y));
+svgText.addEventListener("pointerdown", e => {
+  dragging = true;
+  startX = e.clientX;
+  svgText.setPointerCapture(e.pointerId);
 });
 
-// Touch (móvil)
-textoSVG.addEventListener("touchstart", () => dragging = true);
-document.addEventListener("touchend", () => dragging = false);
-
-document.addEventListener("touchmove", e => {
+svgText.addEventListener("pointermove", e => {
   if (!dragging) return;
-  const rect = document.getElementById("virola").getBoundingClientRect();
-  const t = e.touches[0];
-  const x = t.clientX - rect.left;
-  const y = t.clientY - rect.top;
-  aplicarTransform(getAngle(x, y));
+  const dx = e.clientX - startX;
+  startOffset = (startOffset + dx * 0.15) % 100;
+  textPath.setAttribute("startOffset", startOffset + "%");
+  startX = e.clientX;
 });
+
+svgText.addEventListener("pointerup", () => dragging = false);
+svgText.addEventListener("pointerleave", () => dragging = false);

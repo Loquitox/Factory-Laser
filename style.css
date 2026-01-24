@@ -3,30 +3,24 @@ body {
   text-align: center;
 }
 
-#canvas-container {
-  width: 300px;
-  margin: 0 auto;
-}
-
 svg {
-  width: 100%;
-  touch-action: none;
+  margin: 10px auto;
+  display: block;
 }
 
-#textoVirola {
-  font-size: 24px;
-  font-weight: bold;
+#virolaText {
+  font-size: 16px;
+  fill: black;
   cursor: grab;
-  user-select: none;
 }
 
 input {
-  width: 250px;
-  padding: 8px;
-  margin: 15px 0;
+  width: 220px;
+  padding: 6px;
+  margin: 10px 0;
 }
 
-.botones button {
-  padding: 8px 12px;
-  margin: 5px;
+.buttons button {
+  padding: 6px 12px;
+  margin: 4px;
 }

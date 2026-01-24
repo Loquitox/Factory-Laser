@@ -1,134 +1,106 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const capasContenedor = document.getElementById('capasTexto');
-  const agregarCapaBtn = document.getElementById('agregarCapaBtn');
-  const papeleraBtn = document.getElementById('papeleraBtn');
+const svg = document.getElementById("svg");
+const input = document.getElementById("textInput");
 
-  let capaID = 0;
-  let capasAgregadas = [];
+const sizes = [14, 18, 22, 26]; // 4 alturas reales
+let texts = [];
+let active = null;
 
-  // ===== Crear palabra inicial visible =====
-  crearCapa("TU TEXTO ACÁ", false);
+function createText(content) {
+  const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
 
-  // ===== Botón agregar nueva palabra =====
-  agregarCapaBtn.addEventListener('click', () => {
-    crearCapa(`Palabra ${capaID + 1}`, true);
-  });
+  text.setAttribute("font-size", sizes[1]);
+  text.setAttribute("text-anchor", "middle");
+  text.setAttribute("cursor", "grab");
 
-  // ===== Botón papelera =====
-  papeleraBtn.addEventListener('click', () => {
-    if (capasAgregadas.length === 0) return;
-    const ultimaCapa = capasAgregadas.pop();
-    ultimaCapa.grupo.remove();
-    ultimaCapa.controlesDiv.remove();
-  });
+  textPath.setAttribute("href", "#pathTop");
+  textPath.setAttribute("startOffset", "50%");
+  textPath.textContent = content || "TEXTO";
 
-  // ===== Función para crear capa =====
-  function crearCapa(textoInicial, removable) {
-    capaID++;
+  text.appendChild(textPath);
+  svg.appendChild(text);
 
-    // Crear grupo <g> para la capa
-    const grupo = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    grupo.setAttribute("id", `capa-${capaID}`);
+  const obj = {
+    text,
+    textPath,
+    sizeIndex: 1,
+    offset: 50,
+    inverted: false
+  };
 
-    // Crear <text> y <textPath>
-    const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    textEl.setAttribute("font-size", "26");
-    textEl.setAttribute("fill", "#000");
-    textEl.setAttribute("dominant-baseline", "middle");
-    textEl.style.cursor = 'grab';
+  enableDrag(obj);
+  texts.push(obj);
+  setActive(obj);
+}
 
-    const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
-    textPath.setAttribute("href", "#textoCircularExterior");
-    textPath.setAttribute("startOffset", "50%");
-    textPath.setAttribute("text-anchor", "middle");
-    textPath.textContent = textoInicial;
+function setActive(obj) {
+  active = obj;
+  input.value = obj.textPath.textContent;
+}
 
-    textEl.appendChild(textPath);
-    grupo.appendChild(textEl);
-    capasContenedor.appendChild(grupo);
-
-    // ===== Controles de capa =====
-    const controlesDiv = document.createElement("div");
-    controlesDiv.classList.add("capa-controles");
-
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = textoInicial;
-    input.placeholder = "Escribí tu texto";
-    input.addEventListener('input', () => {
-      textPath.textContent = input.value;
-    });
-
-    controlesDiv.appendChild(input);
-    document.querySelector(".contenedor").appendChild(controlesDiv);
-
-    // ===== Estado por capa =====
-    let arrastrando = false;
-    let inicioX = 0;
-    let rotacion = 0;
-    let invertido = false;
-
-    // ===== Drag Desktop =====
-    textEl.addEventListener('mousedown', e => {
-      arrastrando = true;
-      inicioX = e.clientX;
-      textEl.style.cursor = 'grabbing';
-      e.preventDefault();
-    });
-
-    document.addEventListener('mousemove', e => {
-      if (!arrastrando) return;
-      const delta = e.clientX - inicioX;
-      rotacion += delta * 0.4;
-      actualizarTransform();
-      inicioX = e.clientX;
-    });
-
-    document.addEventListener('mouseup', () => {
-      arrastrando = false;
-      textEl.style.cursor = 'grab';
-    });
-
-    // ===== Drag Mobile =====
-    textEl.addEventListener('touchstart', e => {
-      arrastrando = true;
-      inicioX = e.touches[0].clientX;
-    });
-
-    document.addEventListener('touchmove', e => {
-      if (!arrastrando) return;
-      const delta = e.touches[0].clientX - inicioX;
-      rotacion += delta * 0.4;
-      actualizarTransform();
-      inicioX = e.touches[0].clientX;
-    });
-
-    document.addEventListener('touchend', () => {
-      arrastrando = false;
-    });
-
-    // ===== Botón invertir =====
-    agregarCapaBtn.addEventListener('click', () => {
-      // nada aquí, ya se usa solo el drag e input
-    });
-
-    textEl.addEventListener('dblclick', () => {
-      invertido = !invertido;
-      actualizarTransform();
-    });
-
-    // ===== Función actualizar transformaciones =====
-    function actualizarTransform() {
-      const rotFinal = invertido ? rotacion + 180 : rotacion;
-      textEl.setAttribute('transform', `rotate(${rotFinal} 210 210)`);
-      textPath.setAttribute('startOffset', '50%');
-      textPath.setAttribute('text-anchor', 'middle');
-    }
-
-    actualizarTransform(); // inicializar
-
-    if (removable) {
-      capasAgregadas.push({grupo, controlesDiv});
-    }
-  }
+input.addEventListener("input", () => {
+  if (active) active.textPath.textContent = input.value;
 });
+
+document.getElementById("add").onclick = () => {
+  createText(input.value);
+};
+
+document.getElementById("remove").onclick = () => {
+  if (!active) return;
+  svg.removeChild(active.text);
+  texts = texts.filter(t => t !== active);
+  active = texts[texts.length - 1] || null;
+  if (active) input.value = active.textPath.textContent;
+};
+
+document.getElementById("invert").onclick = () => {
+  if (!active) return;
+  active.inverted = !active.inverted;
+  active.textPath.setAttribute(
+    "href",
+    active.inverted ? "#pathBottom" : "#pathTop"
+  );
+};
+
+document.getElementById("size").onclick = () => {
+  if (!active) return;
+  active.sizeIndex = (active.sizeIndex + 1) % sizes.length;
+  active.text.setAttribute("font-size", sizes[active.sizeIndex]);
+};
+
+// DRAG angular (mouse + touch)
+function enableDrag(obj) {
+  let startX = 0;
+
+  const start = e => {
+    startX = e.touches ? e.touches[0].clientX : e.clientX;
+    setActive(obj);
+    window.addEventListener("mousemove", move);
+    window.addEventListener("touchmove", move);
+    window.addEventListener("mouseup", end);
+    window.addEventListener("touchend", end);
+  };
+
+  const move = e => {
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const delta = (x - startX) * 0.15;
+    startX = x;
+
+    obj.offset = Math.min(80, Math.max(20, obj.offset + delta));
+    obj.textPath.setAttribute("startOffset", obj.offset + "%");
+  };
+
+  const end = () => {
+    window.removeEventListener("mousemove", move);
+    window.removeEventListener("touchmove", move);
+    window.removeEventListener("mouseup", end);
+    window.removeEventListener("touchend", end);
+  };
+
+  obj.text.addEventListener("mousedown", start);
+  obj.text.addEventListener("touchstart", start);
+}
+
+// Texto inicial
+createText("TEXTO");

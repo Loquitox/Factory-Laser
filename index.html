@@ -1,41 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Factory Laser – Personalizador de Virola</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Customizador Virola - Factory Laser</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>Factory Laser</h1>
-  <p>Previsualizá tu grabado en la virola</p>
+<h2>Personalizá tu virola</h2>
 
-  <div class="contenedor">
+<div class="preview">
+  <svg id="svg" width="320" height="320" viewBox="0 0 320 320">
 
-    <svg id="preview" viewBox="0 0 420 420">
-      <!-- Borde negro debajo -->
-      <circle cx="210" cy="210" r="150" fill="none" stroke="#000" stroke-width="5" />
-      <!-- Aro gris -->
-      <circle cx="210" cy="210" r="150" fill="none" stroke="#cfcfcf" stroke-width="35" />
+    <defs>
+      <path id="pathTop" d="M40,160 a120,120 0 1,1 240,0" />
+      <path id="pathBottom" d="M280,160 a120,120 0 1,1 -240,0" />
+    </defs>
 
-      <!-- Paths circulares -->
-      <defs>
-        <path id="textoCircularExterior" d="M210,210 m-150,0 a150,150 0 1,1 300,0 a150,150 0 1,1 -300,0" />
-        <path id="textoCircularInterior" d="M210,210 m150,0 a150,150 0 1,0 -300,0 a150,150 0 1,0 300,0" />
-      </defs>
+  </svg>
+</div>
 
-      <!-- Capas de texto -->
-      <g id="capasTexto"></g>
-    </svg>
+<div class="controls">
+  <input id="textInput" type="text" placeholder="Escribí tu texto">
 
-    <!-- Controles globales -->
-    <div class="controles-global">
-      <button id="agregarCapaBtn">➕</button>
-      <button id="papeleraBtn">🗑️</button>
-    </div>
-
+  <div class="buttons">
+    <button id="add">+</button>
+    <button id="remove">−</button>
+    <button id="size">Tamaño</button>
+    <button id="invert">Invertir</button>
   </div>
+</div>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
